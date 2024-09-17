@@ -19,10 +19,6 @@ export class BaseUserReqDto {
   @Type(() => String)
   name?: string;
 
-  @IsString()
-  @IsNotEmpty()
-  deviceId?: string;
-
   @ApiProperty()
   @IsOptional()
   @IsString()

@@ -17,9 +17,11 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @SkipAuth()
-  @ApiOperation({ summary: 'sign-up' })
+  @ApiOperation({ summary: 'Sign-up' })
   @Post('sign-up')
-  public async signUp(@Body() dto: SignUpReqDto): Promise<AuthUserResDto> {
+  public async signUp(
+    @Body() dto: SignUpReqDto,
+  ): Promise<AuthUserResDto> {
     return await this.authService.signUp(dto);
   }
 

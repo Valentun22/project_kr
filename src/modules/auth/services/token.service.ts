@@ -18,30 +18,29 @@ export class TokenService {
     this.jwtConfig = this.configService.get<JwtConfig>('jwt');
   }
 
-  public async generateAuthTokens(payload: JwtPayload): Promise<TokenResDto> {
-    const accessToken = await this.jwtService.signAsync(payload, {
-      secret: this.jwtConfig.accessSecret,
-      expiresIn: this.jwtConfig.accessExpiresIn,
-    });
-    const refreshToken = await this.jwtService.signAsync(payload, {
-      secret: this.jwtConfig.refreshSecret,
-      expiresIn: this.jwtConfig.refreshExpiresIn,
-    });
+  public async generateAuthTokens(
+    payload: JwtPayload,
+  ): Promise<TokenResDto> {
+    const [accessToken, refreshToken] = await Promise.all([
+      this.generateToken(payload, TokenType.ACCESS),
+      this.generateToken(payload, TokenType.REFRESH),
+    ]);
 
-    return { accessToken, refreshToken };
+    return {
+      accessToken,
+      refreshToken,
+    };
   }
-
   public async verifyToken(
     token: string,
     type: TokenType,
   ): Promise<JwtPayload> {
     try {
-      return await this.jwtService.verifyAsync(token, {
-        secret: this.getSecret(type),
-      });
-    } catch (error) {
-      console.error(error);
-      throw new UnauthorizedException('invalid token');
+      const secret = this.getSecret(type);
+
+      return await this.jwtService.verifyAsync(token, { secret });
+    } catch (e) {
+      throw new UnauthorizedException();
     }
   }
 
@@ -54,21 +53,14 @@ export class TokenService {
 
     return await this.jwtService.signAsync(payload, { expiresIn, secret });
   }
-  //todo
 
   private getSecret(type: TokenType): string {
-    let secret: string;
     switch (type) {
       case TokenType.ACCESS:
-        secret = this.jwtConfig.accessSecret;
-        break;
+        return this.jwtConfig.accessSecret;
       case TokenType.REFRESH:
-        secret = this.jwtConfig.refreshSecret;
-        break;
-      default:
-        throw new Error('Unknown token type');
+        return this.jwtConfig.refreshSecret;
     }
-    return secret;
   }
 
   private getExpiresIn(type: TokenType): number {

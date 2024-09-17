@@ -38,18 +38,18 @@ export class AuthService {
       deviceId: dto.deviceId,
     });
     await Promise.all([
-      this.refreshRepository.save({
-        deviceId: dto.deviceId,
-        refreshToken: tokens.refreshToken,
-        user_id: user.id,
-      }),
       this.authCacheService.saveToken(
-        tokens.accessToken,
         user.id,
         dto.deviceId,
+        tokens.accessToken,
+      ),
+      this.refreshRepository.saveToken(
+        user.id,
+        dto.deviceId,
+        tokens.refreshToken,
       ),
     ]);
-    return { user: UserMapper.toResponseDto(user), tokens };
+    return AuthMapper.toResponseDto(user, tokens);
   }
 
   public async signUpAdmin(dto: SignUpReqDto): Promise<AuthUserResDto> {

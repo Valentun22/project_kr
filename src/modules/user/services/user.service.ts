@@ -42,6 +42,7 @@ export class UserService {
     await this.userRepository.save(entity);
     throw new HttpException('It is possible to sell the car', HttpStatus.OK);
   }
+
   public async getPublicUser(userId: string): Promise<UserResDto> {
     const entity = await this.userRepository.getById(userId);
     return UserMapper.toResponseDto(entity);
@@ -54,6 +55,7 @@ export class UserService {
     }
     return entity;
   }
+
   public async isEmailUniqOrThrow(email: string): Promise<void> {
     const user = await this.userRepository.findOneBy({ email });
     if (user) {
