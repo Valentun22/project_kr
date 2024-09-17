@@ -5,10 +5,9 @@ import { BaseUserReqDto } from '../../../user/dto/req/base-user.req.dto';
 export class BaseAuthReqDto extends PickType(BaseUserReqDto, [
   'name',
   'email',
-  'bio',
   'password',
 ]) {
-  @IsNotEmpty()
   @IsString()
-  readonly deviceId: string;
+  @IsNotEmpty()
+  deviceId: string;
 }

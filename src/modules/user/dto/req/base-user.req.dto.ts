@@ -1,6 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
-import { IsOptional, IsString, Length, Matches } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Length,
+  Matches,
+} from 'class-validator';
 import { TransformHelper } from '../../../../common/helpers/transform.helper';
 import { regexConstant } from '../../../../constants/regex.constants';
 
@@ -12,6 +18,10 @@ export class BaseUserReqDto {
   @Transform(TransformHelper.trim)
   @Type(() => String)
   name?: string;
+
+  @IsString()
+  @IsNotEmpty()
+  deviceId?: string;
 
   @ApiProperty()
   @IsOptional()
